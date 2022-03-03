@@ -26,15 +26,15 @@ jobs:
             
             export PR_NAME=$(echo $CIRCLE_BRANCH | sed -e 's/\//-/g')
             export IMAGE_TAG=1.21.3-debian-10-r48
-            whereis git
+            
             git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
-            curl -sfL -o ./kyml https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64 && chmod +x ./kyml
+            curl -sfL -o /usr/bin/kyml https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64 && chmod +x /usr/bin/kyml
             curl --silent --location --remote-name \
             "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.2.3/kustomize_kustomize.v3.2.3_linux_amd64" && \
             chmod a+x kustomize_kustomize.v3.2.3_linux_amd64 && \
-            sudo mv kustomize_kustomize.v3.2.3_linux_amd64 kustomize
+            sudo mv kustomize_kustomize.v3.2.3_linux_amd64 /usr/bin/kustomize
             cat templates/preview.yaml \
-            | ./kyml tmpl -e PR_NAME -e IMAGE_TAG \
+            | kyml tmpl -e PR_NAME -e IMAGE_TAG \
             | tee preview/$APP_NAME.yaml
             cd preview && chmod + scripts.sh && ./scripts.sh            
             
