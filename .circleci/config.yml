@@ -33,7 +33,7 @@ jobs:
             "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.2.3/kustomize_kustomize.v3.2.3_linux_amd64" && \
             chmod a+x kustomize_kustomize.v3.2.3_linux_amd64 && \
             sudo mv kustomize_kustomize.v3.2.3_linux_amd64 /usr/bin/kustomize
-            reset
+            kustomize version
             cat templates/preview.yaml \
             | kyml tmpl -e PR_NAME -e IMAGE_TAG \
             | tee preview/$APP_NAME.yaml
