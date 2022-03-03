@@ -42,10 +42,8 @@ jobs:
             cat templates/preview.yaml \
             | kyml tmpl -e PR_NAME -e IMAGE_TAG \
             | tee preview/$APP_NAME.yaml
-            cd preview && chmod + scripts.sh && ./scripts.sh            
-            
-            git config user.email "sl-demo@groupeseloger.com"
-            git config user.name "sl-demo"
+            cd preview && chmod + scripts.sh && ./scripts.sh 
+            ls
             git status
             git add .
             git commit -m "Deploy ephemeral env for branch $CIRCLE_BRANCH"
