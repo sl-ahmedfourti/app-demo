@@ -37,7 +37,7 @@ jobs:
             
             git config user.email "sl-demo@groupeseloger.com"
             git config user.name "sl-demo"
-            git diff
+            git status
             git add .
             git commit -m "Deploy ephemeral env for branch $CIRCLE_BRANCH"
             ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
