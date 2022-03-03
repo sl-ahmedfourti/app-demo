@@ -57,3 +57,7 @@ workflows:
   update-config-file:
     jobs:
       - update-config-file
+          filters:
+            branches:
+              only:
+                - /^feature.*/
