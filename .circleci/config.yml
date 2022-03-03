@@ -24,12 +24,11 @@ jobs:
             echo "It will run all needed unit tests, build and push image to ECR"
             echo "Now we create the ephemeral env based on the PR"
             
-            curl -sfL -o ./kyml https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64 && chmod +x ./kyml
-            
             export PR_NAME=$(echo $CIRCLE_BRANCH | sed -e 's/\//-/g')
             export IMAGE_TAG=1.21.3-debian-10-r48
             
             git clone git@github.com:sl-ahmedfourti/app-demo.git && cd app-demo
+            curl -sfL -o ./kyml https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64 && chmod +x ./kyml
             
             cat templates/preview.yaml \
             | ./kyml tmpl -e PR_NAME -e IMAGE_TAG \
