@@ -41,7 +41,7 @@ jobs:
             
             cat templates/preview.yaml \
             | kyml tmpl -e PR_NAME -e IMAGE_TAG \
-            | tee preview/$APP_NAME.yaml
+            | tee preview/$PR_NAME.yaml
             cd preview && chmod + scripts.sh && ./scripts.sh 
             ls
             git status
