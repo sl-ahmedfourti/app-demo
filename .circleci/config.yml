@@ -5,7 +5,7 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  create-ephemeral-env:
+  deploy:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -56,13 +56,48 @@ jobs:
             echo "Nothing to commit"
             fi
 
+      - run:
+      name: "clean-ephemeral-env"
+      command: |
+        
+        curl --silent --location --remote-name \
+        "https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64" && \
+        chmod a+x kyml_20210610_linux_amd64 && \
+        sudo mv kyml_20210610_linux_amd64 /usr/bin/kyml
+        
+        curl --silent --location --remote-name \
+        "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.2.3/kustomize_kustomize.v3.2.3_linux_amd64" && \
+        chmod a+x kustomize_kustomize.v3.2.3_linux_amd64 && \
+        sudo mv kustomize_kustomize.v3.2.3_linux_amd64 /usr/bin/kustomize
+        
+        git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
+        
+        cd preview && chmod + scripts.sh && ./scripts.sh 
+        git config user.email "sl-demo@groupeseloger.com"
+        git config user.name "sl-demo"
+        git status
+        if [ -n "$(git status --porcelain)" ]
+        then
+        git add .
+        git commit -m "Deploy ephemeral env for branch $CIRCLE_BRANCH"
+        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+        git push
+        else
+        echo "Nothing to commit"
+        fi
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  create-ephemeral-env:
+  deploy:
     jobs:
       - create-ephemeral-env:
           filters:
             branches:
               only:
                 - /^feature.*/
+      - clean-ephemeral-env:
+          filters:
+            branches:
+              only:
+                - main
