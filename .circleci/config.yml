@@ -56,7 +56,7 @@ jobs:
 workflows:
   update-config-file:
     jobs:
-      - create-ephemeral-en:
+      - create-ephemeral-env:
           filters:
             branches:
               only:
