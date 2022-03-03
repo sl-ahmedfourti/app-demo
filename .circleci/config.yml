@@ -23,6 +23,7 @@ jobs:
             echo "This is where my CI will run\n"
             echo "It will run all needed unit tests, build and push image to ECR"
             echo "Now we create the ephemeral env based on the PR"
+            
             curl -sfL -o /usr/local/bin/kyml https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64 && chmod +x /usr/local/bin/kyml
             
             export PR_NAME=$(echo $CIRCLE_BRANCH | sed -e 's/\//-/g')
