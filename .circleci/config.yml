@@ -46,10 +46,15 @@ jobs:
             git config user.email "sl-demo@groupeseloger.com"
             git config user.name "sl-demo"
             git status
+            if [ -n "$(git status --porcelain)" ]
+            then
             git add .
             git commit -m "Deploy ephemeral env for branch $CIRCLE_BRANCH"
             ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
             git push
+            else
+            echo "Nothing to commit"
+            fi
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
