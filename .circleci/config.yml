@@ -81,18 +81,16 @@ jobs:
       - run:
           name: "Clean ephemeral env"
           command: |
-            git clone git@github.com:sl-ahmedfourti/sl-app.git
+            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
             
             SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
             if [[ "$(git log --oneline |grep $SHORT_COMMIT)" == *"Merge pull request"* ]]; then
             MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
             MERGED_BRANCH=${MERGE_MESSAGE#*/}
             echo "Deleting branch $MERGED_BRANCH..."
-            rm -rf sl-app/stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
-            rm -rf sl-app/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
-            cd sl-app/preview && chmod + scripts.sh && ./scripts.sh && cd .. 
-            fi          
-                        
+            rm -rf stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
+            rm -rf preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
+            cd preview && chmod + scripts.sh && ./scripts.sh && cd ..
             git config user.email "sl-demo@groupeseloger.com"
             git config user.name "sl-demo"
             git status
@@ -105,6 +103,7 @@ jobs:
             else
             echo "Nothing to commit"
             fi
+            fi          
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
