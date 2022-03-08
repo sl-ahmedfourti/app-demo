@@ -81,9 +81,9 @@ jobs:
       - run:
           name: "Clean ephemeral env"
           command: |
+            SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
             git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
             
-            SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
             if [[ "$(git log --oneline |grep $SHORT_COMMIT)" == *"Merge pull request"* ]]; then
             MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
             MERGED_BRANCH=${MERGE_MESSAGE#*/}
