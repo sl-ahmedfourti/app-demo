@@ -81,13 +81,14 @@ jobs:
       - run:
           name: "Clean ephemeral env"
           command: |
-            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
+            git clone git@github.com:sl-ahmedfourti/sl-app.git
             
             SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
             if [[ "$(git log --oneline |grep $SHORT_COMMIT)" == *"Merge pull request"* ]]; then
             MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
             MERGED_BRANCH=${MERGE_MESSAGE#*/}
             echo "Deleting branch $MERGED_BRANCH..."
+            cd sl-app
             rm -rf stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
             rm -rf preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
             cd preview && chmod + scripts.sh && ./scripts.sh && cd .. 
