@@ -88,10 +88,9 @@ jobs:
             MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
             MERGED_BRANCH=${MERGE_MESSAGE#*/}
             echo "Deleting branch $MERGED_BRANCH..."
-            cd sl-app
-            rm -rf stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
-            rm -rf preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
-            cd preview && chmod + scripts.sh && ./scripts.sh && cd .. 
+            rm -rf sl-app/stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
+            rm -rf sl-app/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
+            cd sl-app/preview && chmod + scripts.sh && ./scripts.sh && cd .. 
             fi          
                         
             git config user.email "sl-demo@groupeseloger.com"
