@@ -8,7 +8,7 @@ jobs:
   create-ephemeral-env:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
+    machine:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -20,15 +20,11 @@ jobs:
       - run:
           name: "Create ephemeral env"
           command: |
+            
             echo "This is where my CI will run\n"
             echo "It will run all needed unit tests, build and push image to ECR"
             echo "Now we create the ephemeral env based on the PR"
             
-            export PR_NAME=$(echo $CIRCLE_BRANCH | sed -e 's/\//-/g')
-            export IMAGE_TAG=1.21.3-debian-10-r48
-            ssh-add -l
-            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
-           
             curl --silent --location --remote-name \
             "https://github.com/frigus02/kyml/releases/download/v20210610/kyml_20210610_linux_amd64" && \
             chmod a+x kyml_20210610_linux_amd64 && \
@@ -39,10 +35,23 @@ jobs:
             chmod a+x kustomize_kustomize.v3.2.3_linux_amd64 && \
             sudo mv kustomize_kustomize.v3.2.3_linux_amd64 /usr/bin/kustomize
             
-            cat templates/preview.yaml \
-            | kyml tmpl -e PR_NAME -e IMAGE_TAG \
+            export PR_NAME=$(echo $CIRCLE_BRANCH | sed -e 's/\//-/g')
+            export IMAGE_TAG=1.21.3-debian-10-r48
+
+            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
+            
+            mkdir stages/preview/$PR_NAME
+            
+            cat templates/preview-app.yaml \
+            | kyml tmpl -e PR_NAME \
             | tee preview/$PR_NAME.yaml
+            
+            cat templates/kustomization.yaml \
+            | kyml tmpl -e PR_NAME -e IMAGE_TAG \
+            | tee stages/preview/$PR_NAME/kustomization.yaml
+            
             cd preview && chmod + scripts.sh && ./scripts.sh 
+            
             git config user.email "sl-demo@groupeseloger.com"
             git config user.name "sl-demo"
             git status
