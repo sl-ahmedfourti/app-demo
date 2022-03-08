@@ -65,6 +65,48 @@ jobs:
             echo "Nothing to commit"
             fi
 
+
+  clean-ephemeral-env:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/base:stable
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "85:87:3f:ee:95:9d:50:f5:13:18:95:52:84:aa:bb:69"
+      - run:
+          name: "Clean ephemeral env"
+          command: |
+                                 
+            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
+            
+            SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
+            if [[ "$(git log --oneline |grep $SHORT_COMMIT)" == *"Merge pull request"* ]]; then
+            MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
+            MERGED_BRANCH=${MERGE_MESSAGE#*/}
+            echo "Deleting branch $MERGED_BRANCH..."
+            rm -rf stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
+            rm -rf preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
+            cd preview && chmod + scripts.sh && ./scripts.sh && cd .. 
+            fi          
+                        
+            git config user.email "sl-demo@groupeseloger.com"
+            git config user.name "sl-demo"
+            git status
+            if [ -n "$(git status --porcelain)" ]
+            then
+            git add .
+            git commit -m "Clean ephemeral env for branch $MERGED_BRANCH"
+            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+            git push
+            else
+            echo "Nothing to commit"
+            fi
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -75,3 +117,10 @@ workflows:
             branches:
               only:
                 - /^feature.*/
+  clean-ephemeral-env:
+    jobs:
+      - clean-ephemeral-env:
+          filters:
+            branches:
+              only:
+                - main
