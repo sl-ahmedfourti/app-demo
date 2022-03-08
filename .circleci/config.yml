@@ -82,15 +82,15 @@ jobs:
           name: "Clean ephemeral env"
           command: |
             SHORT_COMMIT=$(git rev-parse --short  $CIRCLE_SHA1)
-            git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
+            git clone git@github.com:sl-ahmedfourti/sl-app.git
             
             if [[ "$(git log --oneline |grep $SHORT_COMMIT)" == *"Merge pull request"* ]]; then
             MERGE_MESSAGE=${$(git log --oneline |grep $SHORT_COMMIT)#/}
             MERGED_BRANCH=${MERGE_MESSAGE#*/}
             echo "Deleting branch $MERGED_BRANCH..."
-            rm -rf stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
-            rm -rf preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
-            cd preview && chmod + scripts.sh && ./scripts.sh && cd ..
+            rm -rf sl-app/stages/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]')
+            rm -rf sl-app/preview/$(echo $MERGED_BRANCH | sed -e 's/\//-/g' | tr '[:upper:]' '[:lower:]').yaml
+            cd sl-app/preview && chmod + scripts.sh && ./scripts.sh && cd ../
             git config user.email "sl-demo@groupeseloger.com"
             git config user.name "sl-demo"
             git status
