@@ -39,7 +39,7 @@ jobs:
             export IMAGE_TAG=1.21.3-debian-10-r48
 
             git clone git@github.com:sl-ahmedfourti/sl-app.git && cd sl-app
-            ls 
+            ls stages
             mkdir stages/preview/$PR_NAME
             
             cat templates/preview-app.yaml \
